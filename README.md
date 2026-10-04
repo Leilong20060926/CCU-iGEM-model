@@ -22,15 +22,25 @@ All results can expand into a full plain-text report. The interface switches ins
 
 | Function | Computes | Method |
 |---|---|---|
-| Stage development time | Days per stage at temperature *T* | Degree-day law, *D* = *K* / (*T* − *T*₀): egg 60.2 / (*T* − 12), larva 240 / (*T* − 11), pupa 84 / (*T* − 14) |
-| Population dynamics | Daily egg / larva / pupa / adult counts | 4-stage matrix projection (Lefkovitch, 1965); survival *s* = [0.9, 0.8, 0.9, 0.85], transition rate *P* = 1 / *D*, fecundity *f* = (200 × 0.5) / 14 per day |
+| Stage development time | Days per stage at temperature *T* | Degree-day law $`D=\frac{K}{T-T_0}`$: egg $`\frac{60.2}{T-12}`$, larva $`\frac{240}{T-11}`$, pupa $`\frac{84}{T-14}`$ |
+| Population dynamics | Daily egg / larva / pupa / adult counts | 4-stage matrix projection (Lefkovitch, 1965); survival $`s=[0.9,0.8,0.9,0.85]`$, transition rate $`P=\frac{1}{D}`$, fecundity $`f=\frac{200\times0.5}{14}`$ per day |
 | Temperature input | Mean temperature for the selected month | 2021–2025 monthly means from CWA CODiS station data (Jul 29.1, Aug 28.7, Sep 28.3, Oct 26.2 °C) |
-| Limonene evaporation | Remaining droplet mass over time | Shrinking-surface solution *m*(*t*) = (*m*₀^1/3 − (*k*<sub>evap</sub> / 3)·*t*)³, with *k*<sub>evap</sub> = 0.035 · (*T* / 25) · (1 + *v*<sub>wind</sub>) |
-| Spray protection | Days a single spray stays effective | Full-evaporation time 3·*m*₀^1/3 / *k*<sub>evap</sub>, rounded up to whole days |
+| Limonene evaporation | Remaining droplet mass over time | Shrinking-surface solution $`m(t)=\left(m_0^{1/3}-\frac{k_{evap}}{3}\,t\right)^3`$, with $`k_{evap}=0.035\cdot\frac{T}{25}\cdot(1+v_{wind})`$ |
+| Spray protection | Days a single spray stays effective | Full-evaporation time $`t_{end}=\frac{3\,m_0^{1/3}}{k_{evap}}`$, rounded up to whole days |
 | Early warning | First day larvae exceed the threshold | No-intervention run against the economic injury threshold of 20 larvae/m² (1 larva per hill) |
-| Dynamic dosing | Dose for each spray | Reduction *r* = max((*L* − 20) / *L*, 0.5 × 0.40); dose = area × base dose × *r* / 0.40; next spray allowed after protection + 5 days |
+| Dynamic dosing | Dose for each spray | Reduction $`r=\max\left(\frac{L-20}{L},\,0.5\times0.40\right)`$; $`\text{dose}=A\times m_0\times\frac{r}{0.40}`$ ($`A`$ = field area, $`m_0`$ = base dose); next spray allowed after protection + 5 days |
 
-The vapor pressure behind *k*<sub>evap</sub> comes from limonene's molecular weight (136.23 g/mol) plugged into the Antoine equation. The conventional fixed-surface-area evaporation formula, *E* = *M*·*K*·*A*·*P*<sub>sat</sub> / (*R*·*T*), assumes the surface area stays constant. In reality, both the mass and the surface area of a limonene droplet shrink as it volatilizes, so we use the nonlinear solution above instead.
+The vapor pressure behind $`k_{evap}`$ comes from limonene's molecular weight (136.23 g/mol) plugged into the Antoine equation. The conventional fixed-surface-area evaporation formula,
+
+$$
+E=\frac{M\cdot K\cdot A\cdot P_{sat}}{R\cdot T}
+$$
+
+assumes the surface area stays constant. In reality, both the mass and the surface area of a limonene droplet shrink as it volatilizes, so we use the nonlinear solution instead:
+
+$$
+m(t)=\left(m_0^{1/3}-\frac{k_{evap}}{3}\,t\right)^3
+$$
 
 ## How We Built It
 
